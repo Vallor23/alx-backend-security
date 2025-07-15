@@ -13,4 +13,4 @@ class Command(BaseCommand):
         if created:
            self.stdout.write(self.style.SUCCESS(f"Blocked IP: {ip}"))
         else:
-            self.stdout.write(self.style.WARNING(f"IP alread blocked: {ip}"))
+            self.stdout.write(self.style.WARNING(f"IP already blocked: {ip}"))
