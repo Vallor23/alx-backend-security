@@ -1,17 +1,22 @@
+from django.http import HttpResponseForbidden
 from django.utils.timezone import now
-from .models import RequestLog
+from .models import RequestLog, BlockedIP
 
 class LogIPMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request, *args, **kwds):
-        ip_address = self.get_client_ip(request)
+        ip = self.get_client_ip(request)
         path = request.path
 
+        # Block blacklisted IPs
+        if BlockedIP.objects.filter(ip_address=ip).exists():
+            return HttpResponseForbidden("Access denied: Your IP is blocked.")
+        
         # Log to database
         RequestLog.objects.create(
-            ip_address = ip_address,
+            ip_address = ip,
             timestamp = now(),
             path = path
         )
