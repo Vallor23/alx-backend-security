@@ -5,8 +5,9 @@ from django.utils.timezone import now
 from .models import RequestLog, BlockedIP
 from django_ip_geolocation.backends import IPGeolocationAPI
 
+
 API_KEY = settings.IP_GEOLOCATION_KEY
-geo = IPGeolocationAPI(API_KEY)
+# geo = IPGeolocationAPI(API_KEY)
 
 class LogIPMiddleware:
     def __init__(self, get_response):
@@ -24,13 +25,19 @@ class LogIPMiddleware:
         geo_data = cache.get(ip)
         if not geo_data:
             try:
-                response = geo.get_geolocation_data(ip)
+                # Mock the geolocation response
+                response ={
+                    "country_name": "Kenya",
+                    "city": "Nairobi"
+                }
+
                 geo_data = {
                     "country": response.get("country_name"),
                     "city": response.get("city")
                 }
                 cache.set(ip, geo_data, timeout=60 * 60 * 24)
-            except Exception:
+            except Exception as e:
+                # print(f"Geo API error: {e}")
                 geo_data = {"country": None, "city": None}
 
 
