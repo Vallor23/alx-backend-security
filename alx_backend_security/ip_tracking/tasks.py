@@ -27,3 +27,7 @@ def flag_suspicious_ips():
     for ip, count in ip_counts.items():
         if count > 100:
             suspicious[ip] = 'Exceeded 100 requests/hour'
+
+    # Store suspicious IPs
+    for ip, reason in suspicious.items():
+        SuspiciousIP.objects.get_or_create(ip_address=ip, defaults={'reason':reason})
